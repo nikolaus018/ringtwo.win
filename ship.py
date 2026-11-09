@@ -1,6 +1,6 @@
-"""Deploy site/ to the Venvy app "homepage" (static, serves ringtwo.win).
+"""Deploy ringtwo.win to the Venvy app "homepage" (python: server.py serves site/ and /api/*).
 
-    python3 ship.py           upload site/ and restart
+    python3 ship.py           upload server.py + site/ and restart
     python3 ship.py login     sign in once (password is prompted, never stored)
 
 Uses the Venvy session in ~/.config/venvy/ (shared with the other projects' ship.py).
@@ -18,7 +18,8 @@ import urllib.request
 import uuid
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent / "site"
+ROOT = Path(__file__).resolve().parent
+SHIP = ["server.py", "requirements.txt"]   # plus everything under site/
 BASE = os.getenv("VENVY_URL", "https://venvy.ringtwo.win").rstrip("/")
 APP_NAME = os.getenv("VENVY_APP", "homepage")
 SESSION_FILE = Path.home() / ".config" / "venvy" / (urllib.parse.urlparse(BASE).netloc.replace(":", "_") + ".json")
@@ -123,7 +124,9 @@ def deploy():
     app = find_app(v)
     if not app:
         sys.exit(f"✗ No Venvy app named {APP_NAME!r}.")
-    files = sorted(str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file() and not p.name.startswith("."))
+    files = SHIP + sorted(str(p.relative_to(ROOT)) for p in (ROOT / "site").rglob("*") if p.is_file() and not p.name.startswith("."))
+    if app["runtime"] != "python" or app.get("entrypoint") != "server.py":
+        sys.exit("✗ The app isn't set up as python/server.py yet. Run once:  python3 ship.py setup")
     print(f"• Uploading {len(files)} files to {APP_NAME} (#{app['id']}) …")
     for i in range(0, len(files), UPLOAD_BATCH):
         batch = [("files", f, (ROOT / f).read_bytes()) for f in files[i:i + UPLOAD_BATCH]]
@@ -140,8 +143,40 @@ def deploy():
     sys.exit(f"✗ App status: {app['status']}")
 
 
+def setup():
+    """One-time switch of the app from Venvy's static runtime to python + server.py, same port (the tunnel stays)."""
+    v = Venvy()
+    if not v.load() or not v.call("GET", "/api/auth/status").get("authenticated"):
+        sys.exit("✗ Not signed in to Venvy. Run once:  python3 ship.py login")
+    app = find_app(v)
+    port = app.get("port") or 8001
+    if app["status"] in ("running", "starting"):
+        v.call("POST", f"/api/apps/{app['id']}/control?action=stop")
+        for _ in range(30):
+            time.sleep(1)
+            if find_app(v)["status"] == "stopped":
+                break
+    env = json.loads(app.get("env_json") or "{}")
+    v.call("PUT", f"/api/apps/{app['id']}", {"runtime": "python", "entrypoint": "server.py", "port": port,
+                                              "manual_ports": [port], "env_vars": {**env, "PORT": str(port)},
+                                              "restart_policy": "on-failure", "start_on_boot": True,
+                                              "healthcheck_path": "/healthz"})
+    files = [("files", f, (ROOT / f).read_bytes()) for f in SHIP]
+    v.call("POST", f"/api/apps/{app['id']}/files/upload", form={"path": ""}, files=files)
+    res = v.call("POST", f"/api/apps/{app['id']}/venv/rebuild", {"version": ""})
+    end = time.time() + 600
+    while time.time() < end:
+        j = v.call("GET", f"/api/jobs/{res['job_id']}")
+        if j["status"] == "done":
+            break
+        if j["status"] == "error":
+            sys.exit(f"✗ venv: {j.get('error')}")
+        time.sleep(2)
+    print(f"✓ {APP_NAME} is now python/server.py on port {port}. Next:  python3 ship.py")
+
+
 if __name__ == "__main__":
     try:
-        login() if sys.argv[1:] == ["login"] else deploy()
+        {"login": login, "setup": setup}.get(sys.argv[1] if sys.argv[1:] else "", deploy)()
     except ApiError as e:
         sys.exit("✗ Venvy session expired. Run:  python3 ship.py login" if e.status == 401 else f"✗ Venvy: {e}")

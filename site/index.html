@@ -2,49 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nikolaus · ringtwo.win</title>
-<meta name="description" content="Nikolaus, Vienna. Venvy, Passable, EAR Router, Leeway and two ESP32 boards. Things I built because I needed them, self-hosted on one mini PC.">
+<meta name="description" content="Nikolaus, Vienna. Six things I built because I needed them, and you can play with every one: break a deploy, plan a tour on my own route server, sail around rocks, drive a car home.">
 <meta property="og:title" content="Nikolaus · ringtwo.win">
-<meta property="og:description" content="A server panel, a DJ app, a route planner for my Zivildienst tours, a chartplotter and two circuit boards.">
+<meta property="og:description" content="Six things I built. You can play with every one of them.">
 <meta property="og:image" content="https://ringtwo.win/img/passable-transition.webp">
 <meta property="og:url" content="https://ringtwo.win/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0f0f11">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%23222227'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%23ececf1' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%233d82f6'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v={{v}}">
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
+
 <div class="shell">
-  <aside class="side" aria-label="Projects">
-    <a class="me" href="#/">
+  <aside class="side" aria-label="Site">
+    <a class="me" href="#/" aria-label="Nikolaus, overview">
       <span class="avatar" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="16" cy="16" r="4" fill="#3d82f6"/></svg></span>
-      <span class="me-t"><b>Nikolaus</b><small>Vienna · ringtwo.win</small></span>
+      <span class="me-t"><b>Nikolaus</b><small id="me-sub">Vienna</small></span>
     </a>
-    <nav class="nav" id="nav">
+    <nav class="nav" aria-label="Projects">
       <a href="#/" class="nav-item" data-id=""><span class="dot home"></span><span class="nm">Overview</span></a>
-      <div class="nav-label"><span>Projects</span><span id="nav-count"></span></div>
+      <div class="nav-label" aria-hidden="true">Projects</div>
       <div id="nav-projects" class="nav-projects"></div>
     </nav>
     <div class="side-foot">
-      <a class="hosts-mini" id="hosts-mini" href="#/" data-goto="hosts" title="Apps on my mini PC, checked from your browser"><span class="hm-dots"></span><span class="hm-t">checking hosts…</span></a>
-      <a href="https://github.com/nikolaus018" class="gh">github.com/nikolaus018 ↗</a>
-      <p class="keys"><kbd>j</kbd> <kbd>k</kbd> next / previous · <kbd>esc</kbd> overview</p>
+      <a class="srv-mini" href="#/" data-goto="server" aria-label="Live status of my home server">
+        <span class="pulse" id="srv-pulse"></span>
+        <span id="srv-mini">connecting to the mini PC…</span>
+      </a>
+      <a href="https://github.com/nikolaus018" class="gh">github.com/nikolaus018</a>
+      <p class="keys"><kbd>j</kbd><kbd>k</kbd> next / previous <kbd>esc</kbd> overview</p>
     </div>
   </aside>
 
-  <main id="main" tabindex="-1" aria-live="polite"></main>
+  <main id="main" tabindex="-1"></main>
 </div>
 
-<div class="lightbox" id="lightbox" hidden>
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Screenshot">
   <figure><img alt=""><figcaption></figcaption></figure>
-  <button type="button" class="lb-close" aria-label="Close">close · esc</button>
+  <button type="button" class="lb-close">Close <kbd>esc</kbd></button>
 </div>
 <div class="tip" id="tip" role="tooltip"></div>
 
-<noscript><p style="padding:24px;font:16px system-ui;color:#ececf1">This page needs JavaScript. The projects are at <a style="color:#3d82f6" href="https://github.com/nikolaus018">github.com/nikolaus018</a>.</p></noscript>
-<script src="app.js" defer></script>
+<noscript><p class="noscript">This site is mostly things to play with, so it needs JavaScript. The code is at <a href="https://github.com/nikolaus018">github.com/nikolaus018</a>.</p></noscript>
+<script type="module" src="app.js?v={{v}}"></script>
 </body>
 </html>

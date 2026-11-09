@@ -1,16 +1,22 @@
 {
   "owner": "nikolaus018",
+  "born": "2007-10",
+  "intro": "I'm {age} and live in Vienna. Most of what I build starts because I need it: a panel to run my own servers, a route planner for my Zivildienst tours, a chartplotter for the boat, two little boards that save me a few annoying seconds every day. Sometimes it's just curiosity, like teaching a Mac to DJ.",
   "projects": [
     {
       "id": "venvy",
       "repo": "venvy",
       "name": "Venvy",
       "color": "#3d82f6",
-      "kind": "Self-hosted PaaS",
-      "platform": "Linux",
+      "kind": "Self-hosted app platform",
+      "platform": "Linux · Python",
       "status": "my favourite",
-      "one": "My own Heroku for one Linux box.",
-      "what": "You upload an app or point Venvy at a git repo, and it runs, watches and publishes it. Every site on ringtwo.win runs on it, including this one.",
+      "one": "My own Heroku, running on a mini PC at home.",
+      "why": "My favourite, and the one I've put the most time into: more than a year, most of it before it went public. I wanted my own apps online without renting a platform. Everything on ringtwo.win runs on it, including this page.",
+      "toy": {
+        "title": "Break a deploy",
+        "hint": "Ship a broken release and watch Venvy notice and roll it back."
+      },
       "facts": [
         [
           "1+ year",
@@ -21,24 +27,24 @@
           "runtimes"
         ],
         [
-          "1 user / app",
-          "Unix-level isolation"
+          "1 Unix user",
+          "per app"
         ],
         [
           "auto rollback",
-          "apps and Venvy itself"
+          "for apps and for itself"
         ]
       ],
       "story": [
-        "It runs Python, Node, Bun, Deno, Go, Rust, PHP, Ruby, Java and static sites, and <b>each app runs as its own Unix user</b>, so one hacked app can't read the next one's files.",
-        "A deploy pulls, installs, builds, restarts and runs a health check. If the new release doesn't come up, <b>Venvy puts the previous one back</b> without anyone touching it. Each deploy is a release you can roll back to by hand later.",
-        "Venvy updates itself the same way. A release is checked against its signature and installed next to the running version, and the database is snapshotted. If the new version isn't healthy, the installer switches back.",
-        "It also has a browser terminal, live logs, cron jobs, CPU and memory alerts, backups to S3, WebDAV or scp, and a Cloudflare Tunnel that makes an app public with one click. The UI runs under a strict CSP with no inline script."
+        "You upload an app or point Venvy at a git repo, and it runs it, watches it and gives it a public hostname. It handles Python, Node, Bun, Deno, Go, Rust, PHP, Ruby, Java and static sites, and <b>each app runs as its own Unix user</b>, so one compromised app can't read another one's files.",
+        "A deploy pulls, installs, builds, restarts and then <b>checks the app actually answers</b>. If it doesn't, the previous release comes back on its own, which is what you just did above. Every deploy stays in the history, so you can roll back to it later.",
+        "Venvy updates itself with the same caution. A new version is checked against its signature, installed next to the running one, and the database is snapshotted first. If the new version doesn't come up healthy, the installer switches back."
       ],
       "details": [
-        "Uploads are chunked and resumable, so a big app survives a flaky connection.",
-        "Push webhooks from GitHub, GitLab, Gitea or Forgejo trigger a deploy.",
-        "The session cookie alone isn't enough: a per-origin key in localStorage stops hosted apps on the same host from riding the panel's session."
+        "Browser terminal, live logs, cron jobs, CPU and memory alerts.",
+        "Backups to S3, WebDAV or scp on a schedule.",
+        "Push-to-deploy webhooks from GitHub, GitLab, Gitea and Forgejo.",
+        "A strict CSP with no inline script, and a per-origin key so hosted apps can't ride the panel's session cookie."
       ],
       "media": {
         "type": "wide",
@@ -53,11 +59,10 @@
             "img/venvy-deploy.webp",
             1600,
             1000,
-            "Deploys are releases. Any of them can be rolled back to."
+            "Every deploy is a release you can roll back to."
           ]
         ]
       },
-      "demo": "venvy",
       "stack": [
         "Python",
         "vanilla JS",
@@ -74,8 +79,7 @@
           "Releases",
           "https://github.com/nikolaus018/venvy/releases"
         ]
-      ],
-      "why": "My favourite. I've put more time into Venvy than into anything else, over a year, most of it before it went public on GitHub. It started because I wanted my own apps online without renting a platform, and grew into the thing all of them run on."
+      ]
     },
     {
       "id": "passable",
@@ -84,17 +88,21 @@
       "color": "#f0894a",
       "kind": "DJ app",
       "platform": "macOS + iPhone",
-      "status": "press play",
-      "one": "Drop in songs, get one continuous mix, built stem by stem.",
-      "what": "Every song is split into vocals, melody, drums and bass on the Mac. Then the set is ordered, and each transition is planned the way a DJ would plan it. Any of them can be opened and reshaped by hand.",
+      "status": "curiosity",
+      "one": "Give it songs, get back one continuous mix, built stem by stem.",
+      "why": "I wanted to know how hard it really is to automate what a DJ does. Very, it turns out: you need stem separation, beat tracking, key detection, and a detector for when a singer breathes.",
+      "toy": {
+        "title": "Listen to a transition",
+        "hint": "Two real transitions Passable planned on its own. Watch A hand over to B."
+      },
       "facts": [
         [
           "4 stems",
-          "per song, on-device"
+          "per song, on the Mac"
         ],
         [
           "~45 s",
-          "to split a 4-min track"
+          "to split a 4-min song"
         ],
         [
           "40 ms",
@@ -106,15 +114,15 @@
         ]
       ],
       "story": [
-        "Splitting runs on <b>Core ML</b>: HTDemucs v4 for drums, bass and melody, and Mel-Band RoFormer for the voice. The voice model gets 2.9 dB closer to the true vocal. After that come neural beat tracking, key detection, song structure and where each vocal line starts and ends.",
-        "Voices hand over <b>between lines, on a breath</b>. Line timing comes from on-device speech recognition, which gets the words wrong but the timing right. It's then snapped to a map of the singer's breaths, so nobody gets cut off mid-word.",
-        "A drummer's tempo drifts a percent or two from bar to bar. Each bar gets stretched to the average tempo, and the feel inside the bar stays. Songs whose tempo really changes get a grid bar by bar.",
-        "Requests during a set get downloaded, separated and mixed in after the current song <b>without the music stopping</b>. The whole set renders sample-exact to AAC or 24-bit WAV, or goes to the iPhone app over Wi-Fi."
+        "Every song is split into vocals, melody, drums and bass on <b>Core ML</b>: HTDemucs v4 for the band, Mel-Band RoFormer for the voice. Then Passable finds the beat, the key, the song's structure, and where each vocal line starts and ends.",
+        "Voices hand over <b>between lines, on a breath</b>. On-device speech recognition gets the words wrong but the timing roughly right. Snapping that timing to a map of the singer's breaths makes the cut land between words.",
+        "A real drummer drifts a percent or two from bar to bar, so each bar is stretched to the average tempo and keeps its feel. During a set, requests get downloaded, separated and mixed in <b>without the music stopping</b>."
       ],
       "details": [
-        "The order is chosen to keep energy building toward the set's hardest song.",
-        "B's chorus or drop is placed to land as A leaves. There's never a chorus into a quiet intro.",
-        "One kick and one bass line at a time. The low end swaps on a single downbeat."
+        "The set is ordered by tempo, key and energy, building toward its hardest song.",
+        "B's chorus or drop is placed to land as A leaves.",
+        "One kick and one bass line at a time. The low end swaps on a single downbeat.",
+        "Renders sample-exact to AAC or 24-bit WAV, or sends the set to the iPhone app."
       ],
       "media": {
         "type": "wide",
@@ -133,7 +141,6 @@
           ]
         ]
       },
-      "demo": "passable",
       "stack": [
         "Swift",
         "SwiftUI",
@@ -144,7 +151,7 @@
       ],
       "links": [
         [
-          "Listen",
+          "More transitions",
           "https://passable.ringtwo.win"
         ],
         [
@@ -155,20 +162,27 @@
           "Download",
           "https://github.com/nikolaus018/passable/releases/latest"
         ]
-      ],
-      "why": "I wanted to know how hard it really is to automate what a DJ does. It turns out you need stem separation, beat tracking, key detection, and a detector for when a singer breathes."
+      ]
     },
     {
       "id": "ear-router",
       "repo": "ear-router",
       "name": "EAR Router",
       "color": "#3ccf7e",
-      "kind": "Route planner",
+      "kind": "Delivery route planner",
       "platform": "iOS · CarPlay",
       "status": "I use it every tour",
-      "one": "The route planner for Meals on Wheels drivers in Vienna.",
-      "what": "It loads the day's tour, finds every door, orders the stops and predicts when the van gets to each one. Once loaded it works offline, and it has no third-party dependencies.",
+      "one": "The route planner I use on every Meals on Wheels tour of my Zivildienst.",
+      "why": "I'm doing my Zivildienst driving Essen auf Rädern in Vienna, and this is the app on my phone every tour. Almost every feature started as something that slowed me down on the road.",
+      "toy": {
+        "title": "Find the door",
+        "hint": "Type an address the way delivery lists write it. The app's own rules find the exact entrance in the city's register, live."
+      },
       "facts": [
+        [
+          "409",
+          "commits, the most of anything here"
+        ],
         [
           "0",
           "dependencies"
@@ -178,24 +192,20 @@
           "ETA model backtested"
         ],
         [
-          "23",
-          "districts + any Austrian PLZ"
-        ],
-        [
-          "Swift 6",
-          "strict concurrency"
+          "offline",
+          "once the tour is loaded"
         ]
       ],
       "story": [
-        "Addresses are looked up in <b>Vienna's own building register</b> first, with Nominatim as the fallback and a check that the result landed in the right district. The parser knows <code>Stiege</code>, <code>Tür</code>, garden-colony <code>Parzelle</code>s and house numbers glued to the street name.",
-        "The stop order comes from my <b>own OSRM server</b> on the mini PC, with a public fallback. Arrival times come from the pace the driver actually kept that day, anchored to the last delivery. I backtested that model against 12 real tours.",
-        "The driver taps <i>Geliefert</i> at the door, in the stairwell, not where the van parked. So the app learns door time rather than parking time, and remembers which floor each customer lives on across every tour.",
-        "Before the van leaves the yard, a preflight checklist runs, while every failure is still cheap. On the road there's a next-stop screen, CarPlay, a read-only “Hey Siri, nächster Stopp”, and a hand-off to Apple Maps, Waze or Google Maps with the building's actual entrance."
+        "Delivery lists write Viennese addresses every way there is: <code>Gentzgasse 129/1/2/23</code>, <code>Großfeldstraße 9/Parz.68</code>, umlauts typed as “oe”, streets glued to their numbers. The app splits off the <b>Stiege or garden plot</b>, which Vienna's register files as an address of its own with its own front door. It drops the Tür and Stock, which no register knows, and asks the city. You just watched that happen.",
+        "An answer is only taken if it's in the right district, on the right street and at the right door. Otherwise the pin goes on the map as “≈” so I check it, instead of looking confident and being wrong. If every answer agrees the address is in another district, the app offers to move it. The stop order then comes from my <b>own OSRM server</b> on the mini PC, and arrival times from the pace I've actually kept that day, a model I backtested against 12 real tours.",
+        "I tap <i>Geliefert</i> at the door, in the stairwell, not where the van is parked. So the app learns door time rather than parking time, and remembers which floor every customer lives on."
       ],
       "details": [
-        "A whole store backs up to one readable JSON file, because everything lives on one phone.",
-        "Stops behind the same front door are grouped together.",
-        "It ships by Xcode Run onto the driver's phone. A free developer profile lasts seven days, and the app keeps track of when it runs out."
+        "A preflight checklist runs in the yard, while every failure is still cheap.",
+        "Hands the next stop to Apple Maps, Waze or Google Maps with the building's actual entrance.",
+        "CarPlay, and a read-only “Hey Siri, nächster Stopp”.",
+        "The whole store backs up to one readable JSON file, because everything lives on one phone."
       ],
       "media": {
         "type": "phones",
@@ -204,7 +214,7 @@
             "img/ear-tour.webp",
             460,
             1000,
-            "The tour, with arrival estimates."
+            "The tour with arrival estimates."
           ],
           [
             "img/ear-map.webp",
@@ -234,8 +244,7 @@
           "GitHub",
           "https://github.com/nikolaus018/ear-router"
         ]
-      ],
-      "why": "I'm doing my Zivildienst driving Essen auf Rädern, and I use this app on every tour. Most of the details below came from noticing what slowed me down on the road."
+      ]
     },
     {
       "id": "leeway",
@@ -245,36 +254,40 @@
       "kind": "Chartplotter",
       "platform": "iOS · Rust server",
       "status": "for the boat",
-      "one": "A chartplotter that plans sailing routes around rocks, shallows and bad wind.",
-      "what": "It's a native iPhone chartplotter and passage planner with offline sea charts for the eastern Adriatic, from Istria to the Bay of Kotor. A Rust server I wrote builds and serves the charts.",
+      "one": "A chartplotter that plans passages around rocks, shallows and bad wind.",
+      "why": "I go boating, and I wanted a plotter that thinks about depth, wind and rocks the way I do when I plan a passage. The first version took five days.",
+      "toy": {
+        "title": "Sail around the rocks",
+        "hint": "Drag A and B. Change the draft and the wind. The route only goes where the boat floats."
+      },
       "facts": [
         [
+          "50 commits",
+          "in 5 days"
+        ],
+        [
           "13.2–19.0°E",
-          "42.2–45.6°N, offline"
+          "Istria to Kotor, offline"
         ],
         [
           "2.2 km",
           "wind model, hourly"
         ],
         [
-          "AIS · NMEA",
+          "AIS",
           "collision + anchor alarms"
-        ],
-        [
-          "3",
-          "palettes: day, dusk, night"
         ]
       ],
       "story": [
-        "<b>Shortest</b> finds the shortest path through water at least as deep as draft plus clearance. It stays clear of charted rocks, wrecks, obstructions, isolated-danger and cardinal marks, and bridges lower than the air draft plus a metre.",
-        "<b>Fastest</b> grows isochrones through the forecast wind using the boat's own polar, tacks and gybes where it pays, and runs the same safety checks. Every route is timed hourly with the finest available model (ICON-2I at 2.2 km, then ICON-EU, then global), plus waves and tidal streams. Bura gusts get flagged.",
-        "Underway it has a navigation bar with cross-track error, a Live Activity, man overboard, an anchor watch with a drag alarm, and an AIS collision alarm with CPA/TCPA limits. Alarms sound even with the phone on silent.",
-        "The charts come from open bathymetry, the Croatian Hydrographic Institute's open data and the national register of lights. A <b>Rust / axum</b> server on the same mini PC as this page turns them into vector tiles."
+        "<b>Shortest</b> finds the shortest path through water deeper than the boat's draft plus a margin. It stays clear of charted rocks, wrecks, obstructions and cardinal marks, and away from bridges lower than the mast.",
+        "<b>Fastest</b> grows isochrones through the forecast wind using the boat's own polar, and tacks where it pays. The toy above runs a much smaller version of both on a made-up archipelago.",
+        "Underway it has an AIS collision alarm, an anchor watch, man overboard, and NMEA instruments over the boat's Wi-Fi, and alarms sound even with the phone on silent. The charts come from open bathymetry and official Croatian data, and a <b>Rust / axum</b> server on the same mini PC as this page serves them."
       ],
       "details": [
-        "Light sectors are drawn with their characteristics, e.g. Fl(2)R.5s 12m 6M.",
-        "Tap anything on the chart for the object, its depth, the bearing and distance from the boat, and the next tide.",
-        "Polars can be imported from designers' tables or ORC certificates."
+        "Day, dusk and night palettes, switched by the sun.",
+        "Light sectors with their characteristics, e.g. Fl(2)R.5s 12m 6M.",
+        "Tap anything for the object, its depth, and the bearing and distance from the boat.",
+        "Polars can be imported straight from designers' tables or ORC certificates."
       ],
       "media": {
         "type": "phones",
@@ -311,8 +324,7 @@
           "GitHub",
           "https://github.com/nikolaus018/leeway"
         ]
-      ],
-      "why": "I go boating, and I wanted a plotter that thinks about depth, wind and rocks the way I do when I plan a passage."
+      ]
     },
     {
       "id": "garagedoor-pro",
@@ -320,10 +332,14 @@
       "name": "garageDoor-pro",
       "color": "#e5533d",
       "kind": "Firmware + PCB",
-      "platform": "ESP32-C3 · GNSS",
-      "status": "try the state machine",
-      "one": "A box in the car that opens the garage door when you leave and when you come home.",
-      "what": "There's no phone and no app involved. An ESP32-C3 and a GPS module press the button of a spare remote through one transistor. The box runs off the car's USB, so it boots with the ignition.",
+      "platform": "ESP32-C3 · GPS",
+      "status": "convenience",
+      "one": "A box in the car that opens the garage door when I leave and when I come home.",
+      "why": "I was tired of fishing for the garage remote every time I drove in or out. Now a GPS and one transistor do it.",
+      "toy": {
+        "title": "Drive home",
+        "hint": "Drive away and back. The state machine follows the firmware's rules, four times faster."
+      },
       "facts": [
         [
           "150 / 300 m",
@@ -343,13 +359,14 @@
         ]
       ],
       "story": [
-        "The underground garage has no GPS reception, so the board <b>remembers in flash where it was parked</b>. It knows at boot whether it's driving out or not.",
-        "There are two radii because GPS jitters at the edge. Arriving counts at 150 m and leaving at 300 m, so the state can't flap. A fix only counts with <code>gnssFixOK</code>, at most 50 m accuracy and at least 4 satellites.",
-        "The trip state machine is <b>pure C, unit-tested on the host</b> under AddressSanitizer and UBSan. The 4-layer board is generated from a Python netlist, so the schematic, layout, BOM and placement never disagree. There's also a perfboard version you can build in about an hour."
+        "An ESP32-C3 and a GPS module press the button of a spare remote through one transistor. It runs off the car's USB, so it boots with the ignition and loses power when I park.",
+        "The garage is underground and has no GPS reception, so the board <b>remembers in flash where it was parked</b>. At boot it already knows it's driving out. That's the 10 presses you saw before the GPS even had a fix.",
+        "There are two radii because GPS jitters at the edge: arriving counts at 150 m, leaving at 300 m, so the state can't flap. The state machine is <b>pure C, unit-tested on the host</b> under AddressSanitizer and UBSan. The 4-layer board is generated from a Python netlist."
       ],
       "details": [
+        "A fix only counts with gnssFixOK, at most 50 m accuracy and at least 4 satellites.",
         "A captive-portal web panel sets home once, and the radii are configurable there.",
-        "OTA updates, LED status codes, and a 3D-printable case for the prototype."
+        "OTA updates, LED status codes, and a perfboard version you can build in about an hour."
       ],
       "media": {
         "type": "render",
@@ -358,11 +375,10 @@
             "img/garage-iso.webp",
             1568,
             872,
-            "garageDoor-pro v1.1, ESP32-C3-MINI-1 on four layers."
+            "garageDoor-pro v1.1: ESP32-C3-MINI-1 on four layers."
           ]
         ]
       },
-      "demo": "garage",
       "stack": [
         "ESP-IDF",
         "C",
@@ -374,8 +390,7 @@
           "GitHub",
           "https://github.com/nikolaus018/garageDoor-pro"
         ]
-      ],
-      "why": "Built for my own convenience: I wanted to stop fishing for the garage remote every time I drive in or out."
+      ]
     },
     {
       "id": "dji-fcc-esp32",
@@ -384,21 +399,25 @@
       "color": "#e3b341",
       "kind": "Firmware + PCB",
       "platform": "ESP32-S3 · USB host",
-      "status": "flash from the browser",
-      "one": "A pocket dongle that replaces a phone app.",
-      "what": "You plug it into a DJI N1 remote. It patches the remote to FCC mode over USB, shows the result on an LED, and goes back to sleep.",
+      "status": "convenience",
+      "one": "A pocket dongle that does the job of a phone app.",
+      "why": "I didn't want to plug a phone into the drone remote and run an app every single time. Now it's a dongle with one LED.",
+      "toy": {
+        "title": "Patch a remote",
+        "hint": "Plug the dongle in, once with Espressif's stock USB stack and once with mine."
+      },
       "facts": [
         [
           "512 B",
-          "bulk packets, full-speed"
+          "packets where USB allows 64"
+        ],
+        [
+          "2 layers",
+          "battery board, rev A"
         ],
         [
           "0",
-          "DRC errors, rev A"
-        ],
-        [
-          "80 × 34 mm",
-          "battery + USB-C"
+          "DRC errors"
         ],
         [
           "Web Serial",
@@ -406,12 +425,14 @@
         ]
       ],
       "story": [
-        "The ESP32-S3 runs as a <b>USB host</b> and talks to the remote's CDC-ACM interface. Interfaces 0 and 1 are DJI-proprietary, and the serial one is 2.",
-        "The remote reports 512-byte bulk packets on a full-speed link, which Espressif's USB host stack rejects. So the project <b>ships a patched copy of that stack</b>, with the max-packet check relaxed and the TX FIFO sized to fit.",
-        "The battery-powered board is generated from one Python source and autorouted on 2 layers. It comes with Gerbers, BOM, placement and a STEP model. A <b>Web Serial flasher</b> on GitHub Pages flashes either build from Chrome, and CI redeploys it on every push."
+        "The ESP32-S3 runs as a <b>USB host</b>, finds the remote's serial interface, sends two packets, and shows the result on an LED. The patch has to be repeated every time the drone and remote power up, which is exactly why a phone app was so annoying.",
+        "Full-speed USB allows bulk packets of at most 64 bytes. The remote announces 512 anyway, and Espressif's USB host stack refuses it. So the project <b>ships a patched copy of that stack</b>, with the check relaxed and the transmit FIFO sized to fit.",
+        "The battery board is generated from one Python source and comes with Gerbers, BOM, placement and a STEP model. A <b>Web Serial flasher</b> on GitHub Pages flashes it straight from Chrome, and CI redeploys it on every push."
       ],
       "details": [
-        "The dev-board build is tested on a real remote. The custom board hasn't been assembled yet."
+        "The two packets come from DJI-FCC-HACK. This replaces its Android app.",
+        "Tested on a real remote with a dev board. The custom board hasn't been assembled yet.",
+        "FCC power is only legal in the US. Power-cycling goes back to CE."
       ],
       "media": {
         "type": "render",
@@ -420,7 +441,7 @@
             "img/dji-hero.webp",
             1260,
             570,
-            "Rev A, 80 × 34 mm."
+            "Rev A, 80 × 34 mm, battery and USB-C."
           ]
         ]
       },
@@ -439,57 +460,13 @@
           "GitHub",
           "https://github.com/nikolaus018/dji-fcc-esp32"
         ]
-      ],
-      "why": "Built for my own convenience: I didn't want to plug a phone into the drone remote and run an app every single time."
-    },
-    {
-      "id": "ahm",
-      "repo": "ahm",
-      "name": "ahm",
-      "color": "#a1a1aa",
-      "kind": "Windows utility",
-      "platform": "Win32 · WinUI 3",
-      "status": "0 % idle CPU",
-      "one": "A crosshair overlay for Windows that uses no CPU while idle.",
-      "what": "It's one layered, click-through, topmost window holding a pre-rendered bitmap. It only redraws when a setting changes.",
-      "facts": [
-        [
-          "0 %",
-          "idle CPU"
-        ],
-        [
-          "C",
-          "overlay, no runtime deps"
-        ],
-        [
-          "1",
-          "per-user installer"
-        ]
-      ],
-      "story": [
-        "The overlay is plain <b>Win32 in C</b>. It lives in the tray and toggles with a global hotkey.",
-        "Settings are a separate <b>WinUI 3</b> app that edits an ini file, which the overlay picks up live. The settings app exits when it's closed, so the XAML runtime never sits in memory.",
-        "Pushing a version tag builds the installer in GitHub Actions and publishes it."
-      ],
-      "stack": [
-        "C",
-        "Win32",
-        "C#",
-        "WinUI 3",
-        "Inno Setup"
-      ],
-      "links": [
-        [
-          "GitHub",
-          "https://github.com/nikolaus018/ahm"
-        ]
       ]
     }
   ],
   "hosts": [
     [
       "homepage",
-      "/",
+      "/healthz",
       "ringtwo.win",
       "this page"
     ],
@@ -497,7 +474,7 @@
       "passable",
       "https://passable.ringtwo.win/",
       "passable.ringtwo.win",
-      "Passable's demo"
+      "Passable's listening page"
     ],
     [
       "ear-router",
@@ -507,12 +484,9 @@
     ],
     [
       "osrm",
-      "https://osrm.ringtwo.win/",
+      "https://osrm.ringtwo.win/route/v1/driving/16.37,48.2;16.38,48.21",
       "osrm.ringtwo.win",
-      "routing for EAR Router"
+      "the router behind EAR Router"
     ]
-  ],
-  "intro": "I'm Nikolaus, {age}, from Vienna. Most of what I build starts because I need it: <a href=\"#/venvy\">a panel to run my own servers</a>, <a href=\"#/ear-router\">a route planner for my Zivildienst tours</a>, <a href=\"#/leeway\">a chartplotter for the boat</a>, and <a href=\"#/garagedoor-pro\">two</a> <a href=\"#/dji-fcc-esp32\">little boards</a> that save me a few annoying seconds every day. Sometimes it's just curiosity, like <a href=\"#/passable\">teaching a Mac to DJ</a>.",
-  "born": "2007-10",
-  "shipFiles": 19
+  ]
 }

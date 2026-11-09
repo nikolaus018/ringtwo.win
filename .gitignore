@@ -1,1 +1,3 @@
 .profile-tmp/
+data/
+__pycache__/
