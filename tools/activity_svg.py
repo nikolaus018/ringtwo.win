@@ -14,19 +14,11 @@ import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-OWNER = "nikolaus018"
-REPOS = [  # (repo, label, colour)
-    ("venvy", "Venvy", "#3d82f6"),
-    ("passable", "Passable", "#f0894a"),
-    ("leeway", "Leeway", "#22b8cf"),
-    ("ear-router", "EAR Router", "#3ccf7e"),
-    ("garageDoor-pro", "garageDoor-pro", "#e5533d"),
-    ("dji-fcc-esp32", "dji-fcc-esp32", "#e3b341"),
-    ("ahm", "ahm", "#a1a1aa"),
-]
-TZ = ZoneInfo("Europe/Vienna")
 SITE = Path(__file__).resolve().parent.parent / "site"
-
+_P = json.loads((SITE / "projects.json").read_text())
+OWNER = _P["owner"]
+REPOS = [(p["repo"], p["name"], p["color"]) for p in _P["projects"]]  # (repo, label, colour)
+TZ = ZoneInfo("Europe/Vienna")
 THEMES = {
     "dark": dict(bg="#0d1117", line="#30363d", lane="#161b22", text="#e6edf3", muted="#7d8590"),
     "light": dict(bg="#ffffff", line="#d0d7de", lane="#f6f8fa", text="#1f2328", muted="#656d76"),
